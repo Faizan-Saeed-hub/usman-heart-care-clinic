@@ -404,7 +404,7 @@
   background: #fff;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  overflow: hidden;
+  overflow-x: auto;
   box-shadow: var(--shadow);
 }
 .admin-table {
@@ -728,16 +728,140 @@
 @media(max-width: 900px) {
   .admin-grid {
     grid-template-columns: 1fr;
+    gap: 20px;
   }
   .stats-grid {
     grid-template-columns: 1fr;
   }
+  .admin-sidebar {
+    padding: 12px;
+  }
+  .admin-nav-menu {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+  .admin-nav-item {
+    width: auto;
+    padding: 10px 14px;
+    font-size: 14px;
+    justify-content: center;
+  }
 }
 @media(max-width: 600px) {
-  .chat-container {
-    width: 90vw;
-    right: -10px;
-    height: 80vh;
+  #uhc-chat-widget {
+    bottom: 15px;
+    right: 15px;
   }
+  .chat-container {
+    width: calc(100vw - 30px);
+    right: 0;
+    bottom: 70px;
+    height: calc(100vh - 120px);
+    max-height: 550px;
+  }
+  .day-config-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px;
+  }
+  .day-time-inputs {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .day-time-inputs div {
+    flex: 1;
+    min-width: 80px;
+  }
+  .day-time-inputs input, .day-time-inputs select {
+    width: 100%;
+  }
+  .form-row, .inline-form-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .inline-form-grid .full-width {
+    grid-column: auto;
+  }
+}
+
+/* ==========================================================================
+   Modify Appointment Modal Overlay & Card Styling
+   ========================================================================== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(11, 45, 92, 0.5);
+  backdrop-filter: blur(8px);
+  z-index: 25000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+.modal-card {
+  background: #fff;
+  padding: 30px;
+  border-radius: var(--radius);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.2);
+  width: 92%;
+  max-width: 600px;
+  border: 1px solid var(--line);
+  transform: scale(0.95);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.modal-overlay.active .modal-card {
+  transform: scale(1);
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 12px;
+}
+.modal-header h3 {
+  margin: 0;
+  color: var(--navy);
+  font-size: 22px;
+}
+.modal-close-btn {
+  background: none;
+  border: 0;
+  font-size: 28px;
+  cursor: pointer;
+  color: var(--muted);
+  line-height: 1;
+}
+.modal-close-btn:hover {
+  color: var(--red);
+}
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 25px;
+  border-top: 1px solid var(--line);
+  padding-top: 15px;
+}
+.btn-action.modify {
+  background: #eef4ff;
+  color: var(--blue);
+  border-color: #cbd7e1;
 }
 

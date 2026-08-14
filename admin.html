@@ -280,7 +280,64 @@
       </section>
     </div>
   </div>
-</main>
+<!-- Modify Appointment Modal Overlay -->
+<div id="modify-modal-overlay" class="modal-overlay">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>Modify Appointment Details</h3>
+      <button id="close-modify-modal" class="modal-close-btn">&times;</button>
+    </div>
+    <form id="modify-appointment-form">
+      <input type="hidden" id="edit-booking-id">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="edit-name">Patient Name</label>
+          <input type="text" id="edit-name" required>
+        </div>
+        <div class="form-group">
+          <label for="edit-age">Age</label>
+          <input type="number" id="edit-age" required min="1" max="120">
+        </div>
+        <div class="form-group">
+          <label for="edit-phone">Phone Number</label>
+          <input type="text" id="edit-phone" required>
+        </div>
+        <div class="form-group">
+          <label for="edit-service">Service</label>
+          <select id="edit-service" required>
+            <!-- Dynamically populated -->
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="edit-date">Preferred Date</label>
+          <input type="date" id="edit-date" required>
+        </div>
+        <div class="form-group">
+          <label for="edit-time">Preferred Time Slot</label>
+          <select id="edit-time" required>
+            <!-- Dynamically populated -->
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="edit-status">Status</label>
+          <select id="edit-status" required>
+            <option value="pending">Pending</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label for="edit-notes">Notes / Symptoms</label>
+          <textarea id="edit-notes" rows="3"></textarea>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" id="btn-cancel-modify" class="btn btn-light">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
 
 <script src="config.js"></script>
 <script src="common.js"></script>

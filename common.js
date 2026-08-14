@@ -78,7 +78,12 @@
   getLocalData(STORAGE_KEYS.timings, defaultTimings);
   
   const botSettings = getLocalData(STORAGE_KEYS.chatbot, defaultChatbotSettings);
-  if ((!botSettings.geminiApiKey || botSettings.geminiApiKey === "") && configApiKey !== "") {
+  const lastConfigKey = localStorage.getItem("uhcLastConfigApiKey") || "";
+  if (configApiKey !== "" && configApiKey !== lastConfigKey) {
+    botSettings.geminiApiKey = configApiKey;
+    saveLocalData(STORAGE_KEYS.chatbot, botSettings);
+    localStorage.setItem("uhcLastConfigApiKey", configApiKey);
+  } else if ((!botSettings.geminiApiKey || botSettings.geminiApiKey === "") && configApiKey !== "") {
     botSettings.geminiApiKey = configApiKey;
     saveLocalData(STORAGE_KEYS.chatbot, botSettings);
   }

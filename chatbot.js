@@ -25,7 +25,10 @@ document.addEventListener("DOMContentLoaded", () => {
             <span class="chat-status">Online • Virtual Guide</span>
           </div>
         </div>
-        <button id="uhc-chat-close" class="chat-close" aria-label="Close chat">×</button>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <button type="button" id="uhc-chat-clear" class="chat-clear-btn" title="Clear Chat History" style="background:none; border:0; color:rgba(255,255,255,0.8); font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center;">🗑</button>
+          <button type="button" id="uhc-chat-close" class="chat-close" aria-label="Close chat" style="line-height:1;">×</button>
+        </div>
       </div>
 
       <!-- Messages Log -->
@@ -55,14 +58,53 @@ document.addEventListener("DOMContentLoaded", () => {
   const trigger = document.getElementById("uhc-chat-trigger");
   const container = document.getElementById("uhc-chat-container");
   const closeBtn = document.getElementById("uhc-chat-close");
+  const clearBtn = document.getElementById("uhc-chat-clear");
   const messagesDiv = document.getElementById("uhc-chat-messages");
   const form = document.getElementById("uhc-chat-form");
   const input = document.getElementById("uhc-chat-input");
   const chips = document.querySelectorAll(".chat-chip");
   const badge = document.querySelector(".chat-trigger-badge");
 
+  const STORAGE_KEY_HISTORY = "uhcChatHistory";
   let conversationHistory = []; // Stores { sender: "user" | "bot", text: string }
   let isFirstOpen = true;
+
+  // Load chat history from localStorage
+  function loadChatHistory() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_HISTORY);
+      if (saved) {
+        conversationHistory = JSON.parse(saved);
+      }
+    } catch (e) {
+      console.warn("Failed to load chat history", e);
+    }
+  }
+
+  // Save chat history to localStorage
+  function saveChatHistory() {
+    try {
+      localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(conversationHistory));
+    } catch (e) {
+      console.warn("Failed to save chat history", e);
+    }
+  }
+
+  // Render history bubbles in UI
+  function renderChatHistory() {
+    messagesDiv.innerHTML = "";
+    if (conversationHistory.length > 0) {
+      conversationHistory.forEach(msg => {
+        appendMessage(msg.sender, msg.text, false);
+      });
+      isFirstOpen = false;
+      badge.style.display = "none";
+    }
+  }
+
+  // Initialize History
+  loadChatHistory();
+  renderChatHistory();
 
   // Toggle Chat window
   trigger.addEventListener("click", () => {
@@ -80,7 +122,15 @@ document.addEventListener("DOMContentLoaded", () => {
     container.classList.add("closed");
   });
 
-  // Click outside to close (optional but nice, keeping it simple - only close via button)
+  clearBtn.addEventListener("click", () => {
+    if (confirm("Are you sure you want to clear your chat history?")) {
+      localStorage.removeItem(STORAGE_KEY_HISTORY);
+      conversationHistory = [];
+      messagesDiv.innerHTML = "";
+      isFirstOpen = true;
+      sendBotGreeting();
+    }
+  });
 
   // Handle Form Submission
   form.addEventListener("submit", (e) => {
@@ -103,13 +153,17 @@ document.addEventListener("DOMContentLoaded", () => {
   // Greeting Message
   function sendBotGreeting() {
     const chatbotSettings = window.UHC.getChatbotSettings();
-    appendMessage("bot", chatbotSettings.greeting || "Hello! I am UHC-Bot, the virtual assistant for Usman Heart Care Clinic. How can I help you today?");
+    const greetingText = chatbotSettings.greeting || "Hello! I am UHC-Bot, the virtual assistant for Usman Heart Care Clinic. How can I help you today?";
+    appendMessage("bot", greetingText);
+    conversationHistory.push({ sender: "bot", text: greetingText });
+    saveChatHistory();
   }
 
   // Handle User Message
   async function handleUserMessage(text) {
     appendMessage("user", text);
     conversationHistory.push({ sender: "user", text: text });
+    saveChatHistory();
 
     // Show typing indicator
     const typingIndicator = appendTypingIndicator();
@@ -119,6 +173,7 @@ document.addEventListener("DOMContentLoaded", () => {
       removeTypingIndicator(typingIndicator);
       appendMessage("bot", reply);
       conversationHistory.push({ sender: "bot", text: reply });
+      saveChatHistory();
     } catch (err) {
       removeTypingIndicator(typingIndicator);
       appendMessage("bot", "Sorry, I encountered an issue. Please call the clinic directly at 0334-4192623 or try again later.");
@@ -126,7 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Append message bubble
-  function appendMessage(sender, text) {
+  function appendMessage(sender, text, scroll = true) {
     const bubble = document.createElement("div");
     bubble.className = `chat-bubble-container ${sender}`;
     
@@ -143,7 +198,9 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
     
     messagesDiv.appendChild(bubble);
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    if (scroll) {
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
   }
 
   // Append Typing Indicator
@@ -224,26 +281,34 @@ document.addEventListener("DOMContentLoaded", () => {
       { role: "system", content: systemPrompt }
     ];
 
-    // Append last history
+    // Append last history ensuring alternating roles
+    let lastRole = null;
     const lastHistory = conversationHistory.slice(-6);
     lastHistory.forEach(msg => {
-      messages.push({
-        role: msg.sender === "user" ? "user" : "assistant",
-        content: msg.text
-      });
+      const role = msg.sender === "user" ? "user" : "assistant";
+      if (role !== lastRole) {
+        messages.push({
+          role: role,
+          content: msg.text
+        });
+        lastRole = role;
+      }
     });
+
+    const referer = (window.location.origin && window.location.origin !== "null") ? window.location.origin : "https://usman-heart-care-clinic.local";
 
     const response = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${apiKey}`,
-        "HTTP-Referer": window.location.origin,
+        "HTTP-Referer": referer,
         "X-Title": "Usman Heart Care Clinic Assistant"
       },
       body: JSON.stringify({
         model: "google/gemini-2.5-flash",
-        messages: messages
+        messages: messages,
+        max_tokens: 1000
       })
     });
 
@@ -265,20 +330,24 @@ document.addEventListener("DOMContentLoaded", () => {
     const botSettings = window.UHC.getChatbotSettings();
     const apiKey = botSettings.geminiApiKey;
     
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
     const systemPrompt = getSystemPrompt();
 
-    // Prepare history payload for Gemini contents API
-    // Gemini API contents format: [{role: "user" | "model", parts: [{text: "..."}]}]
+    // Prepare history payload for Gemini contents API ensuring alternating roles
     const contents = [];
+    let lastRole = null;
     
     // Get last 6 messages to keep it lightweight but conversational
     const lastHistory = conversationHistory.slice(-6);
     lastHistory.forEach(msg => {
-      contents.push({
-        role: msg.sender === "user" ? "user" : "model",
-        parts: [{ text: msg.text }]
-      });
+      const role = msg.sender === "user" ? "user" : "model";
+      if (role !== lastRole) {
+        contents.push({
+          role: role,
+          parts: [{ text: msg.text }]
+        });
+        lastRole = role;
+      }
     });
 
     // Note: To keep history robust, we include the system prompt inside systemInstruction
@@ -400,6 +469,10 @@ Important Guidelines:
 
     if (cleanMsg.includes("doctor") || cleanMsg.includes("rasheed") || cleanMsg.includes("ahmad") || cleanMsg.includes("who is") || cleanMsg.includes("cardiologist")) {
       return `**${settings.doctorName}** (${settings.doctorTitle})\n_${settings.doctorDegree}_\n\n${settings.doctorDescription}`;
+    }
+
+    if (cleanMsg.includes("disease") || cleanMsg.includes("symptom") || cleanMsg.includes("pain") || cleanMsg.includes("chest") || cleanMsg.includes("breath") || cleanMsg.includes("heart") || cleanMsg.includes("attack") || cleanMsg.includes("bp") || cleanMsg.includes("pressure") || cleanMsg.includes("fever") || cleanMsg.includes("medical") || cleanMsg.includes("treatment") || cleanMsg.includes("medicine") || cleanMsg.includes("sick") || cleanMsg.includes("ill") || cleanMsg.includes("condition") || cleanMsg.includes("diagnose")) {
+      return `As a virtual assistant, I cannot diagnose medical conditions, prescribe treatments, or provide clinical advice.\n\nIf you are experiencing severe or life-threatening symptoms—such as **acute chest pain, pressure, shortness of breath, or sudden palpitations**—please seek immediate emergency medical care.\n\nFor clinical consultations regarding your heart health, you can schedule an appointment with **${settings.doctorName}** (${settings.doctorTitle}) by going to our **[Appointment Page](appointment.html)** or messaging us on WhatsApp at **${settings.whatsapp}**.`;
     }
 
     if (cleanMsg.includes("hello") || cleanMsg.includes("hi") || cleanMsg.includes("hey") || cleanMsg.includes("greetings") || cleanMsg.includes("assalam")) {

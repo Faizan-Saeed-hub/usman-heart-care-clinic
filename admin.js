@@ -148,6 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
             ${bStatus !== "confirmed" ? `<button class="btn-action confirm" data-id="${b.bookingId}" title="Confirm Request">✓</button>` : ""}
             ${bStatus !== "cancelled" ? `<button class="btn-action cancel" data-id="${b.bookingId}" title="Cancel Request">✗</button>` : ""}
             <a href="${waLink}" target="_blank" rel="noopener" class="btn-action whatsapp" title="Chat on WhatsApp">💬</a>
+            <button class="btn-action modify" data-id="${b.bookingId}" title="Modify Details">✏️</button>
             <button class="btn-action delete" data-id="${b.bookingId}" title="Delete Record">🗑</button>
           </div>
         </td>
@@ -162,6 +163,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     document.querySelectorAll(".btn-action.cancel").forEach(btn => {
       btn.addEventListener("click", () => updateAppointmentStatus(btn.getAttribute("data-id"), "cancelled"));
+    });
+    document.querySelectorAll(".btn-action.modify").forEach(btn => {
+      btn.addEventListener("click", () => openModifyModal(btn.getAttribute("data-id")));
     });
     document.querySelectorAll(".btn-action.delete").forEach(btn => {
       btn.addEventListener("click", () => deleteAppointment(btn.getAttribute("data-id")));
@@ -478,6 +482,131 @@ document.addEventListener("DOMContentLoaded", () => {
     passwordSuccess.style.display = "block";
     passwordForm.reset();
     setTimeout(() => passwordSuccess.style.display = "none", 3000);
+  });
+
+  // ==========================================
+  // MODIFY MODAL LOGIC
+  // ==========================================
+  const modifyModal = document.getElementById("modify-modal-overlay");
+  const modifyForm = document.getElementById("modify-appointment-form");
+  const closeModifyModalBtn = document.getElementById("close-modify-modal");
+  const cancelModifyBtn = document.getElementById("btn-cancel-modify");
+  const editBookingIdInput = document.getElementById("edit-booking-id");
+  
+  const editName = document.getElementById("edit-name");
+  const editAge = document.getElementById("edit-age");
+  const editPhone = document.getElementById("edit-phone");
+  const editService = document.getElementById("edit-service");
+  const editDate = document.getElementById("edit-date");
+  const editTime = document.getElementById("edit-time");
+  const editStatus = document.getElementById("edit-status");
+  const editNotes = document.getElementById("edit-notes");
+
+  function openModifyModal(bookingId) {
+    const bookings = window.UHC.getBookings();
+    const b = bookings.find(item => item.bookingId === bookingId);
+    if (!b) return;
+
+    editBookingIdInput.value = b.bookingId;
+    editName.value = b.name;
+    editAge.value = b.age;
+    editPhone.value = b.phone;
+    editStatus.value = b.status || "pending";
+    editNotes.value = b.notes || "";
+    editDate.value = b.date;
+
+    // Populate services dropdown
+    editService.innerHTML = "";
+    const services = window.UHC.getServices();
+    services.forEach(s => {
+      const option = document.createElement("option");
+      option.value = `${s.title} — ${s.price}`;
+      option.textContent = `${s.title} — ${s.price}`;
+      if (b.service === `${s.title} — ${s.price}` || b.service === s.title) {
+        option.selected = true;
+      }
+      editService.appendChild(option);
+    });
+
+    // Populate time slots
+    updateEditTimeSlots(b.date, b.time);
+
+    modifyModal.classList.add("active");
+  }
+
+  function updateEditTimeSlots(dateVal, currentVal) {
+    if (!dateVal) return;
+    const selected = new Date(dateVal + "T12:00:00");
+    const day = selected.getDay();
+    editTime.innerHTML = "";
+    
+    const timings = window.UHC.getTimings();
+    const slots = timings[day] || [];
+    
+    if (!slots.length) {
+      const option = document.createElement("option");
+      option.value = "";
+      option.textContent = "Clinic is closed on this day";
+      editTime.appendChild(option);
+      return;
+    }
+    
+    slots.forEach(t => {
+      const option = document.createElement("option");
+      option.value = t;
+      option.textContent = window.UHC.formatTime12h(t) + " (30 min)";
+      if (t === currentVal) {
+        option.selected = true;
+      }
+      editTime.appendChild(option);
+    });
+    
+    if (currentVal && !slots.includes(currentVal)) {
+      const option = document.createElement("option");
+      option.value = currentVal;
+      option.textContent = window.UHC.formatTime12h(currentVal) + " (30 min) [Current]";
+      option.selected = true;
+      editTime.insertBefore(option, editTime.firstChild);
+    }
+  }
+
+  editDate.addEventListener("change", () => {
+    updateEditTimeSlots(editDate.value, "");
+  });
+
+  function closeModal() {
+    modifyModal.classList.remove("active");
+  }
+
+  closeModifyModalBtn.addEventListener("click", closeModal);
+  cancelModifyBtn.addEventListener("click", closeModal);
+
+  // Close when clicking outside of card
+  modifyModal.addEventListener("click", (e) => {
+    if (e.target === modifyModal) {
+      closeModal();
+    }
+  });
+
+  modifyForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const bookingId = editBookingIdInput.value;
+    const bookings = window.UHC.getBookings();
+    const idx = bookings.findIndex(item => item.bookingId === bookingId);
+    if (idx !== -1) {
+      bookings[idx].name = editName.value.trim();
+      bookings[idx].age = parseInt(editAge.value);
+      bookings[idx].phone = editPhone.value.trim();
+      bookings[idx].service = editService.value;
+      bookings[idx].date = editDate.value;
+      bookings[idx].time = editTime.value;
+      bookings[idx].status = editStatus.value;
+      bookings[idx].notes = editNotes.value.trim();
+      
+      window.UHC.saveBookings(bookings);
+      renderAppointments();
+      closeModal();
+    }
   });
 
   // Helpers
