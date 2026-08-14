@@ -339,6 +339,35 @@
   </div>
 </div>
 
+<!-- Modify Service Modal Overlay -->
+<div id="modify-service-overlay" class="modal-overlay">
+  <div class="modal-card" style="max-width: 450px;">
+    <div class="modal-header">
+      <h3>Modify Service Details</h3>
+      <button id="close-service-modal" class="modal-close-btn">&times;</button>
+    </div>
+    <form id="modify-service-form">
+      <input type="hidden" id="edit-srv-id">
+      <div class="form-group">
+        <label for="edit-srv-title">Service Title</label>
+        <input type="text" id="edit-srv-title" required>
+      </div>
+      <div class="form-group">
+        <label for="edit-srv-price">Fee (or 'Facility available')</label>
+        <input type="text" id="edit-srv-price" required>
+      </div>
+      <div class="form-group">
+        <label for="edit-srv-desc">Description</label>
+        <textarea id="edit-srv-desc" rows="3" required></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" id="btn-cancel-srv" class="btn btn-light">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <script src="config.js"></script>
 <script src="common.js"></script>
 <script src="admin.js"></script>

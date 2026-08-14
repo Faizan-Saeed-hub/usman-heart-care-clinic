@@ -338,6 +338,7 @@ document.addEventListener("DOMContentLoaded", () => {
         </td>
         <td><strong>${escapeHtml(s.price)}</strong></td>
         <td>
+          <button class="btn btn-light btn-sm btn-edit-service" data-id="${s.id}" style="margin-right: 5px;">Edit</button>
           <button class="btn btn-light btn-sm btn-delete-service" data-id="${s.id}">Delete</button>
         </td>
       `;
@@ -346,6 +347,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.querySelectorAll(".btn-delete-service").forEach(btn => {
       btn.addEventListener("click", () => deleteService(btn.getAttribute("data-id")));
+    });
+
+    document.querySelectorAll(".btn-edit-service").forEach(btn => {
+      btn.addEventListener("click", () => openEditServiceModal(btn.getAttribute("data-id")));
     });
   }
 
@@ -606,6 +611,61 @@ document.addEventListener("DOMContentLoaded", () => {
       window.UHC.saveBookings(bookings);
       renderAppointments();
       closeModal();
+    }
+  });
+
+  // ==========================================
+  // MODIFY SERVICE MODAL LOGIC
+  // ==========================================
+  const serviceModal = document.getElementById("modify-service-overlay");
+  const serviceForm = document.getElementById("modify-service-form");
+  const closeSrvModalBtn = document.getElementById("close-service-modal");
+  const cancelSrvBtn = document.getElementById("btn-cancel-srv");
+  
+  const editSrvId = document.getElementById("edit-srv-id");
+  const editSrvTitle = document.getElementById("edit-srv-title");
+  const editSrvPrice = document.getElementById("edit-srv-price");
+  const editSrvDesc = document.getElementById("edit-srv-desc");
+
+  function openEditServiceModal(id) {
+    const services = window.UHC.getServices();
+    const s = services.find(item => item.id === id);
+    if (!s) return;
+
+    editSrvId.value = s.id;
+    editSrvTitle.value = s.title;
+    editSrvPrice.value = s.price;
+    editSrvDesc.value = s.desc;
+
+    serviceModal.classList.add("active");
+  }
+
+  function closeSrvModal() {
+    serviceModal.classList.remove("active");
+  }
+
+  closeSrvModalBtn.addEventListener("click", closeSrvModal);
+  cancelSrvBtn.addEventListener("click", closeSrvModal);
+
+  serviceModal.addEventListener("click", (e) => {
+    if (e.target === serviceModal) {
+      closeSrvModal();
+    }
+  });
+
+  serviceForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const id = editSrvId.value;
+    const services = window.UHC.getServices();
+    const idx = services.findIndex(item => item.id === id);
+    if (idx !== -1) {
+      services[idx].title = editSrvTitle.value.trim();
+      services[idx].price = editSrvPrice.value.trim();
+      services[idx].desc = editSrvDesc.value.trim();
+
+      window.UHC.saveServices(services);
+      renderServicesTable();
+      closeSrvModal();
     }
   });
 
