@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const prettyDate = new Intl.DateTimeFormat("en-PK", { dateStyle: "full" }).format(chosen);
     const prettyTime = window.UHC.formatTime12h(data.time);
     const waText = [
-      "Hello Usman Heart Care Clinic,",
+      "Hello Usman Heart care clinic,",
       `I would like to request an appointment.`,
       `Booking ID: ${bookingId}`,
       `Patient: ${data.name}`,

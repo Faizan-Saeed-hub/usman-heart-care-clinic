@@ -353,7 +353,7 @@ ${timingsStr}
 
 Important Guidelines:
 1. Online Appointment Booking: Patients can book appointments by visiting the 'Appointment' page (appointment.html) on our website, selecting a date/time slot, and sending the details to our WhatsApp number ${settings.whatsapp}.
-2. Medical Disclaimer: You are an AI assistant. You cannot diagnose medical conditions or prescribe treatments. If a user asks medical questions (e.g. chest pain, breathing issues), urge them to seek immediate medical attention or book a face-to-face consultation with Dr. Usman.
+2. Medical Disclaimer: You are an AI assistant. You cannot diagnose medical conditions or prescribe treatments. If a user asks medical questions (e.g. chest pain, breathing issues), urge them to seek immediate medical attention or book a face-to-face consultation with Dr. Rasheed Ahmad.
 3. Keep answers concise, clear, and direct. Use bullet points where appropriate.`;
   }
 
@@ -398,7 +398,7 @@ Important Guidelines:
       return `Usman Heart Care Clinic is located at:\n**${settings.location}**\n\nYou can find directions on **[Google Maps](${settings.mapsUrl})**.`;
     }
 
-    if (cleanMsg.includes("doctor") || cleanMsg.includes("usman") || cleanMsg.includes("who is") || cleanMsg.includes("cardiologist")) {
+    if (cleanMsg.includes("doctor") || cleanMsg.includes("rasheed") || cleanMsg.includes("ahmad") || cleanMsg.includes("who is") || cleanMsg.includes("cardiologist")) {
       return `**${settings.doctorName}** (${settings.doctorTitle})\n_${settings.doctorDegree}_\n\n${settings.doctorDescription}`;
     }
 

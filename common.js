@@ -11,15 +11,15 @@
   };
 
   const defaultSettings = {
-    name: "Usman Heart Care Clinic",
+    name: "Usman Heart care clinic",
     location: "Sharaqpur, Sheikhupura, Punjab, Pakistan",
     phone: "0334-4192623",
     whatsapp: "0341-4114536",
     mapsUrl: "https://www.google.com/maps/place/Usman+Heart+Care+Clinic,+Sharaqpur",
-    doctorName: "Dr. Muhammad Usman",
+    doctorName: "Dr. Rasheed Ahmad",
     doctorTitle: "Consultant Cardiologist",
     doctorDegree: "MBBS, FCPS (Cardiology)",
-    doctorDescription: "Dr. Muhammad Usman is a highly experienced Consultant Cardiologist dedicated to providing comprehensive cardiac care. He specializes in clinical consultations, electrocardiography (ECG), and echocardiography, ensuring patient-centered treatment and state-of-the-art heart diagnosis in Sharaqpur.",
+    doctorDescription: "Dr. Rasheed Ahmad is a highly experienced Consultant Cardiologist dedicated to providing comprehensive cardiac care. He specializes in clinical consultations, electrocardiography (ECG), and echocardiography, ensuring patient-centered treatment and state-of-the-art heart diagnosis in Sharaqpur.",
     adminPassword: "admin123"
   };
 
@@ -67,7 +67,13 @@
   }
 
   // Initialize data if not present
-  getLocalData(STORAGE_KEYS.settings, defaultSettings);
+  const settings = getLocalData(STORAGE_KEYS.settings, defaultSettings);
+  if (settings.doctorName === "Dr. Muhammad Usman") {
+    settings.doctorName = defaultSettings.doctorName;
+    settings.name = defaultSettings.name;
+    settings.doctorDescription = defaultSettings.doctorDescription;
+    saveLocalData(STORAGE_KEYS.settings, settings);
+  }
   getLocalData(STORAGE_KEYS.services, defaultServices);
   getLocalData(STORAGE_KEYS.timings, defaultTimings);
   
