@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Appointment | Usman Heart Care Clinic</title><link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header"><nav class="nav container">
+  <a class="brand" href="index.html"><span class="brand-icon">❤</span><span>Usman Heart Care Clinic<small>Sharaqpur, Punjab</small></span></a>
+  <button class="menu-btn" aria-label="Open menu">☰</button>
+  <div class="nav-links"><a href="index.html">Home</a><a class="active" href="appointment.html">Appointment</a><a href="contact.html">Contact</a><a class="nav-cta" href="appointment.html">Book Now</a></div>
+</nav></header>
+
+<main>
+<section class="page-hero"><div class="container"><span class="eyebrow">ONLINE APPOINTMENT</span><h1>Request an appointment</h1><p>Choose a clinic day and available time. Your request can be sent directly to the clinic on WhatsApp.</p></div></section>
+<section class="section">
+<div class="container appointment-layout">
+  <form id="appointmentForm" class="booking-card">
+    <div class="form-title"><h2>Patient details</h2><span>All fields marked * are required</span></div>
+    <div class="form-grid">
+      <label>Full name *<input id="name" name="name" required maxlength="80" placeholder="Enter patient name"></label>
+      <label>Phone number *<input id="phone" name="phone" required inputmode="tel" placeholder="03XX-XXXXXXX"></label>
+      <label>Age *<input id="age" name="age" required type="number" min="1" max="120" placeholder="Age"></label>
+      <label>Service *
+        <select id="service" name="service" required>
+          <option value="">Select service</option><option>Consultation / Check-up — Rs. 1,500</option>
+          <option>Follow-up Visit — Rs. 500</option><option>ECG Test — Rs. 400</option>
+          <option>Echocardiography — Rs. 3,000</option><option>Angiography — Facility available</option><option>Angioplasty — Facility available</option>
+        </select>
+      </label>
+      <label>Preferred date *<input id="date" name="date" required type="date"></label>
+      <label>Preferred time *<select id="time" name="time" required><option value="">Select a date first</option></select></label>
+      <label class="full">Reason / notes<textarea id="notes" name="notes" rows="4" maxlength="500" placeholder="Optional: briefly describe your visit or any booking note."></textarea></label>
+    </div>
+    <div class="booking-rules">
+      <b>Booking information</b>
+      <ul><li>Online appointment duration: <strong>30 minutes</strong>.</li><li>Please arrive <strong>10 minutes early</strong>.</li><li>Online booking is a request and should be confirmed by the clinic.</li><li>For urgent/emergency symptoms, contact emergency medical services rather than waiting for an online appointment.</li></ul>
+    </div>
+    <label class="consent"><input id="consent" type="checkbox" required> I confirm that the information entered is correct and I understand that the clinic must confirm my appointment.</label>
+    <button class="btn btn-primary full-btn" type="submit">Create Appointment Request</button>
+    <div id="bookingMessage" class="message" aria-live="polite"></div>
+  </form>
+
+  <aside class="booking-side">
+    <div class="side-card"><span class="eyebrow">CLINIC HOURS</span><h3>Current schedule</h3>
+      <div id="appt-schedule-container">
+        <!-- Loaded dynamically via script.js -->
+        <p><b>Monday</b><br>4:00 PM – 7:00 PM</p><p><b>Thursday</b><br>3:00 PM – 7:00 PM</p><p><b>Friday</b><br>Closed</p><p><b>Saturday</b><br>9:00 AM – 11:00 AM</p><p><b>Sunday</b><br>3:00 PM – 7:00 PM</p><p class="muted">Tuesday & Wednesday: Closed</p>
+      </div>
+    </div>
+    <div class="side-card whatsapp-card"><span class="eyebrow">WHATSAPP</span><h3>Need help booking?</h3><p>Send the clinic your appointment request or ask about a suitable time.</p><a id="side-wa-link" class="btn btn-whatsapp" href="https://wa.me/923414114536?text=Hello%20Usman%20Heart%20Care%20Clinic%2C%20I%20would%20like%20to%20book%20an%20appointment." target="_blank" rel="noopener">WhatsApp 0341-4114536</a></div>
+  </aside>
+</div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="container footer-grid">
+    <div><strong id="footer-clinic-name">Usman Heart Care Clinic</strong><p id="footer-clinic-loc">Sharaqpur, Sheikhupura, Punjab, Pakistan</p></div>
+    <div>
+      <p>Clinic: <a href="tel:+923344192623" id="footer-phone">0334-4192623</a></p>
+      <p>WhatsApp: <a href="https://wa.me/923414114536" target="_blank" rel="noopener" id="footer-wa">0341-4114536</a></p>
+    </div>
+    <div>
+      <a href="index.html">Home</a>
+      <a href="contact.html">Contact</a>
+      <a href="https://www.google.com/maps/place/Usman+Heart+Care+Clinic,+Sharaqpur" target="_blank" rel="noopener" id="footer-maps">Google Maps</a>
+      <a href="admin.html" style="opacity: 0.8; font-size: 13px; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 5px;">🔑 Admin Login</a>
+    </div>
+  </div>
+  <div class="credit">Made by Muhammad Faizan</div>
+</footer>
+<script src="config.js"></script>
+<script src="common.js"></script>
+<script src="chatbot.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

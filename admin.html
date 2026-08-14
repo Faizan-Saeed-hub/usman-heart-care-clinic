@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Usman Heart Care Clinic</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="admin-body">
+
+<!-- Login Screen Overlay -->
+<div id="admin-login-overlay" class="login-overlay">
+  <div class="login-card">
+    <div class="brand"><span class="brand-icon">❤</span><span>Usman Heart Care Clinic<small>Admin Area</small></span></div>
+    <h2>Admin Login</h2>
+    <p class="muted">Please enter the administrator password to proceed.</p>
+    <form id="admin-login-form">
+      <div class="form-group">
+        <label for="admin-password">Password</label>
+        <input type="password" id="admin-password" placeholder="Enter password" required>
+      </div>
+      <div id="login-error" class="login-error-msg" style="display:none;">Incorrect password. Please try again.</div>
+      <button type="submit" class="btn btn-primary full-btn">Access Dashboard</button>
+    </form>
+  </div>
+</div>
+
+<!-- Main Admin Layout -->
+<header class="site-header admin-header">
+  <nav class="nav container">
+    <a class="brand" href="index.html">
+      <span class="brand-icon">❤</span>
+      <span>Usman Heart Care Clinic<small>Control Panel</small></span>
+    </a>
+    <div class="admin-nav-actions">
+      <span class="admin-user-status">Logged in as Admin</span>
+      <button id="admin-logout-btn" class="btn btn-light btn-sm">Logout</button>
+    </div>
+  </nav>
+</header>
+
+<main class="admin-main container">
+  <!-- Sidebar Navigation -->
+  <div class="admin-grid">
+    <aside class="admin-sidebar">
+      <nav class="admin-nav-menu">
+        <button class="admin-nav-item active" data-tab="appointments">
+          <span class="nav-icon">📅</span> Appointments
+        </button>
+        <button class="admin-nav-item" data-tab="timings-services">
+          <span class="nav-icon">⏰</span> Clinic Hours & Services
+        </button>
+        <button class="admin-nav-item" data-tab="settings-bot">
+          <span class="nav-icon">⚙</span> Settings & Bot Config
+        </button>
+      </nav>
+    </aside>
+
+    <!-- Content Sections -->
+    <div class="admin-content">
+      <!-- 1. Appointments Panel -->
+      <section id="tab-appointments" class="admin-panel active">
+        <div class="panel-header">
+          <h2>Appointment Bookings</h2>
+          <p class="muted">Manage and review incoming appointment requests.</p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <h3>Total Bookings</h3>
+            <span id="stat-total" class="stat-number">0</span>
+          </div>
+          <div class="stat-card warning">
+            <h3>Pending Requests</h3>
+            <span id="stat-pending" class="stat-number">0</span>
+          </div>
+          <div class="stat-card success">
+            <h3>Confirmed</h3>
+            <span id="stat-confirmed" class="stat-number">0</span>
+          </div>
+        </div>
+
+        <!-- Filter and Search Row -->
+        <div class="control-row">
+          <input type="text" id="appt-search" placeholder="Search by name, phone or ID...">
+          <select id="appt-filter-status">
+            <option value="all">All Statuses</option>
+            <option value="pending">Pending</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+          <button id="btn-clear-cancelled" class="btn btn-light">Clear Cancelled</button>
+        </div>
+
+        <!-- Appointments Table -->
+        <div class="table-container">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Booking ID</th>
+                <th>Patient Details</th>
+                <th>Service Requested</th>
+                <th>Preferred Date & Slot</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="appointments-tbody">
+              <!-- Dynamically populated rows -->
+            </tbody>
+          </table>
+          <div id="no-appointments" class="empty-state" style="display:none;">
+            <p>No appointments found matching the filters.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. Timings & Services Panel -->
+      <section id="tab-timings-services" class="admin-panel">
+        <div class="panel-header">
+          <h2>Timings & Services</h2>
+          <p class="muted">Configure active visiting slots and manage clinical service fees.</p>
+        </div>
+
+        <div class="settings-grid">
+          <!-- Timings Settings -->
+          <div class="settings-card">
+            <h3>Configure Weekly Schedule</h3>
+            <p class="muted">Select which days the clinic is open and generate time slots automatically.</p>
+            <form id="timings-form">
+              <div class="timings-list" id="timings-list-container">
+                <!-- Dynamically generated days -->
+              </div>
+              <button type="submit" class="btn btn-primary">Save Weekly Schedule</button>
+              <div id="timings-success-msg" class="save-status-msg success" style="display:none;">Schedule saved successfully!</div>
+            </form>
+          </div>
+
+          <!-- Services Settings -->
+          <div class="settings-card">
+            <h3>Services & Pricing</h3>
+            <p class="muted">Add, remove, or modify services offered and consultation fees.</p>
+            
+            <!-- Service List -->
+            <div class="services-list-container">
+              <table class="admin-table simple">
+                <thead>
+                  <tr>
+                    <th>Service Title</th>
+                    <th>Fee (Rs.)</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="services-tbody">
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Add Service Form -->
+            <h4 class="form-section-title">Add New Service</h4>
+            <form id="add-service-form" class="inline-form-grid">
+              <div class="form-group">
+                <label for="srv-title">Service Title</label>
+                <input type="text" id="srv-title" placeholder="e.g. ECG Test" required>
+              </div>
+              <div class="form-group">
+                <label for="srv-price">Fee (or 'Facility available')</label>
+                <input type="text" id="srv-price" placeholder="e.g. Rs. 500" required>
+              </div>
+              <div class="form-group full-width">
+                <label for="srv-desc">Brief Description</label>
+                <input type="text" id="srv-desc" placeholder="e.g. Electrocardiogram testing available at clinic." required>
+              </div>
+              <button type="submit" class="btn btn-primary">Add Service</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Settings & Bot Config Panel -->
+      <section id="tab-settings-bot" class="admin-panel">
+        <div class="panel-header">
+          <h2>General Settings & Chatbot Config</h2>
+          <p class="muted">Change clinic details, doctor profile, API Keys, and admin login password.</p>
+        </div>
+
+        <div class="settings-grid">
+          <!-- Clinic Details -->
+          <div class="settings-card">
+            <h3>Clinic & Doctor Information</h3>
+            <form id="clinic-info-form">
+              <div class="form-group">
+                <label for="clinic-name">Clinic Name</label>
+                <input type="text" id="clinic-name" required>
+              </div>
+              <div class="form-group">
+                <label for="clinic-location">Clinic Address/Location</label>
+                <input type="text" id="clinic-location" required>
+              </div>
+              <div class="form-group">
+                <label for="clinic-maps">Google Maps URL</label>
+                <input type="url" id="clinic-maps" required>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="clinic-phone">Primary Phone</label>
+                  <input type="text" id="clinic-phone" required>
+                </div>
+                <div class="form-group">
+                  <label for="clinic-whatsapp">WhatsApp (Booking Number)</label>
+                  <input type="text" id="clinic-whatsapp" required>
+                </div>
+              </div>
+              <hr class="form-divider">
+              <div class="form-group">
+                <label for="doc-name">Doctor Name</label>
+                <input type="text" id="doc-name" required>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="doc-title">Doctor Title</label>
+                  <input type="text" id="doc-title" required>
+                </div>
+                <div class="form-group">
+                  <label for="doc-degree">Qualifications / Degrees</label>
+                  <input type="text" id="doc-degree" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="doc-desc">Doctor Bio / Description</label>
+                <textarea id="doc-desc" rows="4" required></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary">Save Clinic Details</button>
+              <div id="clinic-success-msg" class="save-status-msg success" style="display:none;">Clinic details saved successfully!</div>
+            </form>
+          </div>
+
+          <!-- Chatbot & Security settings -->
+          <div class="settings-card">
+            <h3>Smart AI Chatbot Settings</h3>
+            <p class="muted">Input your Gemini API Key to enable an AI virtual assistant powered by Gemini 2.5 Flash.</p>
+            <form id="chatbot-settings-form">
+              <div class="form-group">
+                <label for="gemini-key">Gemini API Key</label>
+                <div class="input-password-wrapper">
+                  <input type="password" id="gemini-key" placeholder="Enter Gemini API Key">
+                  <button type="button" id="btn-toggle-key" class="btn-toggle-visibility">Show</button>
+                </div>
+                <small class="help-text">Leave blank to use the smart keyword-matching chatbot instead.</small>
+              </div>
+              <div class="form-group">
+                <label for="bot-greeting">Chatbot Greeting Message</label>
+                <textarea id="bot-greeting" rows="3" required></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary">Save Chatbot Settings</button>
+              <div id="bot-success-msg" class="save-status-msg success" style="display:none;">Chatbot settings saved!</div>
+            </form>
+
+            <hr class="panel-section-divider">
+
+            <h3>Change Admin Password</h3>
+            <p class="muted">Update the security password used to access this Control Panel.</p>
+            <form id="change-password-form">
+              <div class="form-group">
+                <label for="new-password">New Password</label>
+                <input type="password" id="new-password" required minlength="4">
+              </div>
+              <div class="form-group">
+                <label for="confirm-password">Confirm Password</label>
+                <input type="password" id="confirm-password" required minlength="4">
+              </div>
+              <div id="password-error-msg" class="login-error-msg" style="display:none;">Passwords do not match.</div>
+              <button type="submit" class="btn btn-primary">Update Password</button>
+              <div id="password-success-msg" class="save-status-msg success" style="display:none;">Password changed successfully!</div>
+            </form>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<script src="config.js"></script>
+<script src="common.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

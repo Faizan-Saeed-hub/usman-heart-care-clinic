@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Usman Heart Care Clinic, Sharaqpur — cardiology consultation, ECG and echocardiography.">
+  <title>Usman Heart Care Clinic | Sharaqpur</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header">
+  <nav class="nav container">
+    <a class="brand" href="index.html"><span class="brand-icon">❤</span><span>Usman Heart Care Clinic<small>Sharaqpur, Punjab</small></span></a>
+    <button class="menu-btn" aria-label="Open menu">☰</button>
+    <div class="nav-links">
+      <a class="active" href="index.html">Home</a>
+      <a href="appointment.html">Appointment</a>
+      <a href="contact.html">Contact</a>
+      <a class="nav-cta" href="appointment.html">Book Now</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <span class="eyebrow">CARDIAC CARE • SHARAQPUR</span>
+      <h1 id="hero-heading">Trusted heart care, <span>close to home.</span></h1>
+      <p id="hero-subheading">Consultation, ECG and echocardiography services at Usman Heart Care Clinic in Sharaqpur.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="appointment.html">Book an Appointment</a>
+        <a class="btn btn-light" id="hero-maps-btn" href="https://www.google.com/maps/place/Usman+Heart+Care+Clinic,+Sharaqpur" target="_blank" rel="noopener">Find on Google Maps</a>
+      </div>
+      <div class="quick-info">
+        <div><strong id="hero-phone">0334-4192623</strong><span>Clinic / appointments</span></div>
+        <div><strong id="hero-whatsapp">0341-4114536</strong><span>WhatsApp</span></div>
+      </div>
+    </div>
+    <div class="hero-card">
+      <img src="assets/Dr.png" alt="Dr. Usman, Cardiologist">
+      <div class="floating-card">
+        <span id="clinic-status-dot">●</span> <span id="clinic-status-text">Clinic Open Now</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-heading">
+      <div><span class="eyebrow">OUR SERVICES</span><h2>Cardiac services & fees</h2></div>
+      <p>Fees and services shown below are based on the clinic notice provided by the clinic.</p>
+    </div>
+    <div class="service-grid" id="services-container">
+      <!-- Loaded dynamically via script.js -->
+      <article class="service-card"><div class="service-icon">✚</div><h3>Consultation / Check-up</h3><strong>Rs. 1,500</strong><p>Initial consultation and clinical check-up.</p></article>
+      <article class="service-card"><div class="service-icon">↻</div><h3>Follow-up Visit</h3><strong>Rs. 500</strong><p>Repeat visit within one month.</p></article>
+      <article class="service-card"><div class="service-icon">♥</div><h3>ECG Test</h3><strong>Rs. 400</strong><p>Electrocardiogram testing available at the clinic.</p></article>
+      <article class="service-card"><div class="service-icon">◉</div><h3>Echocardiography</h3><strong>Rs. 3,000</strong><p>Echo cardiac imaging service.</p></article>
+      <article class="service-card"><div class="service-icon">+</div><h3>Angiography</h3><strong>Facility available</strong><p>Ask the clinic for current arrangements and charges.</p></article>
+      <article class="service-card"><div class="service-icon">+</div><h3>Angioplasty</h3><strong>Facility available</strong><p>Ask the clinic for current arrangements and charges.</p></article>
+    </div>
+  </div>
+</section>
+<section class="section alt">
+  <div class="container split">
+    <div>
+      <span class="eyebrow">LATEST TIMINGS</span>
+      <h2>Clinic visiting hours</h2>
+      <p class="muted">Current clinic schedule:</p>
+      <div class="hours" id="hours-container">
+        <!-- Loaded dynamically via script.js -->
+        <div><b>Monday</b><span>4:00 PM – 7:00 PM</span></div>
+        <div><b>Thursday</b><span>3:00 PM – 7:00 PM</span></div>
+        <div class="closed"><b>Friday</b><span>Closed</span></div>
+        <div><b>Saturday</b><span>9:00 AM – 11:00 AM</span></div>
+        <div><b>Sunday</b><span>3:00 PM – 7:00 PM</span></div>
+        <div class="closed"><b>Tuesday / Wednesday</b><span>Closed</span></div>
+      </div>
+      <a class="text-link" href="appointment.html">Check appointment slots →</a>
+    </div>
+  </div>
+</section>
+
+<section class="search-section">
+  <div class="container">
+    <span class="eyebrow">CLINIC SEARCH</span>
+    <h2>Find Usman Heart Care Clinic</h2>
+    <p>Search the clinic name and location, then open Google Maps for directions.</p>
+    <div class="search-row">
+      <input id="clinicSearch" type="search" placeholder="Search: Usman Heart Care Clinic, Sharaqpur">
+      <button class="btn btn-primary" id="searchClinic">Search</button>
+    </div>
+    <div id="searchResult" class="search-result" aria-live="polite"></div>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="container footer-grid">
+    <div><strong id="footer-clinic-name">Usman Heart Care Clinic</strong><p id="footer-clinic-loc">Sharaqpur, Sheikhupura, Punjab, Pakistan</p></div>
+    <div>
+      <p>Clinic: <a href="tel:+923344192623" id="footer-phone">0334-4192623</a></p>
+      <p>WhatsApp: <a href="https://wa.me/923414114536" target="_blank" rel="noopener" id="footer-wa">0341-4114536</a></p>
+    </div>
+    <div>
+      <a href="appointment.html">Appointment</a>
+      <a href="contact.html">Contact</a>
+      <a href="https://www.google.com/maps/place/Usman+Heart+Care+Clinic,+Sharaqpur" target="_blank" rel="noopener" id="footer-maps">Google Maps</a>
+      <a href="admin.html" style="opacity: 0.8; font-size: 13px; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 5px;">🔑 Admin Login</a>
+    </div>
+  </div>
+  <div class="credit">Made by Muhammad Faizan</div>
+</footer>
+<script src="config.js"></script>
+<script src="common.js"></script>
+<script src="chatbot.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
