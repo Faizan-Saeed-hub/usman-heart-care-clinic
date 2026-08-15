@@ -76,8 +76,11 @@
     settings.adminEmail = "faizan@gmail.com";
     needsSave = true;
   }
-  if (settings.adminPassword === "admin123") {
+  // Force reset credentials to Faizan@786 to override any stale localStorage password
+  if (!localStorage.getItem("uhcPasswordMigratedFaizan")) {
     settings.adminPassword = "Faizan@786";
+    settings.adminEmail = "faizan@gmail.com";
+    localStorage.setItem("uhcPasswordMigratedFaizan", "true");
     needsSave = true;
   }
   if (settings.doctorName === "Dr. Muhammad Usman") {
