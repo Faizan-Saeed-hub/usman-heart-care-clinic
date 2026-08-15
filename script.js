@@ -2,12 +2,40 @@
 // Handles page navigation, search queries, dynamic UI rendering, and booking logic.
 
 document.addEventListener("DOMContentLoaded", () => {
+  // Initialize Theme
+  if (window.UHC && typeof window.UHC.initTheme === "function") {
+    window.UHC.initTheme();
+  }
+
   // Mobile Menu Toggle
   const menuBtn = document.querySelector(".menu-btn");
   const navLinks = document.querySelector(".nav-links");
   if (menuBtn && navLinks) {
     menuBtn.addEventListener("click", () => navLinks.classList.toggle("open"));
   }
+
+  // Theme Toggle Event Listeners
+  const themeToggle = document.getElementById("themeToggle");
+  if (themeToggle) {
+    themeToggle.addEventListener("click", () => {
+      const currentTheme = window.UHC.getTheme();
+      const newTheme = currentTheme === "dark" ? "light" : "dark";
+      window.UHC.setTheme(newTheme);
+      renderThemeToggleState();
+    });
+  }
+
+  function renderThemeToggleState() {
+    const btn = document.getElementById("themeToggle");
+    if (!btn) return;
+    const currentTheme = window.UHC.getTheme();
+    btn.innerHTML = currentTheme === "dark" ? "☀️" : "🌙";
+    btn.setAttribute("title", currentTheme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode");
+    btn.setAttribute("aria-label", currentTheme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode");
+  }
+
+  // Render Theme Switcher Button icon state
+  renderThemeToggleState();
 
   // Render Dynamic Elements across all pages
   renderDynamicContent();
@@ -151,7 +179,6 @@ document.addEventListener("DOMContentLoaded", () => {
       footerPhone.setAttribute("href", "tel:" + settings.phone);
     }
     if (footerWa) {
-      footerWa.textContent = settings.whatsapp;
       const cleanWA = settings.whatsapp.replace(/\D/g, "");
       const formattedWA = cleanWA.startsWith("92") ? cleanWA : (cleanWA.startsWith("0") ? "92" + cleanWA.substring(1) : "92" + cleanWA);
       footerWa.setAttribute("href", "https://wa.me/" + formattedWA);
@@ -166,7 +193,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const heroSub = document.getElementById("hero-subheading");
 
     if (heroPhone) heroPhone.textContent = settings.phone;
-    if (heroWa) heroWa.textContent = settings.whatsapp;
+    if (heroWa) {
+      const cleanWA = settings.whatsapp.replace(/\D/g, "");
+      const formattedWA = cleanWA.startsWith("92") ? cleanWA : (cleanWA.startsWith("0") ? "92" + cleanWA.substring(1) : "92" + cleanWA);
+      heroWa.setAttribute("href", "https://wa.me/" + formattedWA);
+    }
     if (heroMapsBtn) heroMapsBtn.setAttribute("href", settings.mapsUrl);
     if (heroHeading) heroHeading.innerHTML = `Trusted heart care, <span>close to home.</span>`;
     if (heroSub) heroSub.textContent = `Consultation, ECG and echocardiography services at ${settings.name} in Sharaqpur.`;
@@ -216,7 +247,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const serviceSelect = document.getElementById("service");
 
     if (sideWaLink) {
-      sideWaLink.textContent = `WhatsApp ${settings.whatsapp}`;
+      sideWaLink.textContent = "Chat on WhatsApp";
       const cleanWA = settings.whatsapp.replace(/\D/g, "");
       const formattedWA = cleanWA.startsWith("92") ? cleanWA : (cleanWA.startsWith("0") ? "92" + cleanWA.substring(1) : "92" + cleanWA);
       sideWaLink.setAttribute("href", `https://wa.me/${formattedWA}?text=Hello%20${encodeURIComponent(settings.name)}%2C%20I%20would%20like%20to%20book%20an%20appointment.`);
@@ -269,7 +300,7 @@ document.addEventListener("DOMContentLoaded", () => {
       contactPhoneBtn.setAttribute("href", "tel:" + settings.phone);
     }
     if (contactWaLink) {
-      contactWaLink.textContent = settings.whatsapp;
+      contactWaLink.textContent = "Chat on WhatsApp";
       const cleanWA = settings.whatsapp.replace(/\D/g, "");
       const formattedWA = cleanWA.startsWith("92") ? cleanWA : (cleanWA.startsWith("0") ? "92" + cleanWA.substring(1) : "92" + cleanWA);
       contactWaLink.setAttribute("href", "https://wa.me/" + formattedWA);
@@ -369,5 +400,10 @@ document.addEventListener("DOMContentLoaded", () => {
       dot.style.color = "#ffa502"; // orange
       text.textContent = "Clinic Closed (Opens at " + window.UHC.formatTime12h(slots[0]) + ")";
     }
+  }
+
+  // Export dynamically rendering handler
+  if (window.UHC) {
+    window.UHC.renderDynamicContent = renderDynamicContent;
   }
 });

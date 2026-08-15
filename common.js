@@ -20,7 +20,8 @@
     doctorTitle: "Consultant Cardiologist",
     doctorDegree: "MBBS, FCPS (Cardiology)",
     doctorDescription: "Dr. Rasheed Ahmad is a highly experienced Consultant Cardiologist dedicated to providing comprehensive cardiac care. He specializes in clinical consultations, electrocardiography (ECG), and echocardiography, ensuring patient-centered treatment and state-of-the-art heart diagnosis in Sharaqpur.",
-    adminPassword: "admin123"
+    adminEmail: "faizan@gmail.com",
+    adminPassword: "Faizan@786"
   };
 
   const defaultServices = [
@@ -68,12 +69,27 @@
 
   // Initialize data if not present
   const settings = getLocalData(STORAGE_KEYS.settings, defaultSettings);
+  
+  // Migration checks for new credentials
+  let needsSave = false;
+  if (!settings.adminEmail) {
+    settings.adminEmail = "faizan@gmail.com";
+    needsSave = true;
+  }
+  if (settings.adminPassword === "admin123") {
+    settings.adminPassword = "Faizan@786";
+    needsSave = true;
+  }
   if (settings.doctorName === "Dr. Muhammad Usman") {
     settings.doctorName = defaultSettings.doctorName;
     settings.name = defaultSettings.name;
     settings.doctorDescription = defaultSettings.doctorDescription;
+    needsSave = true;
+  }
+  if (needsSave) {
     saveLocalData(STORAGE_KEYS.settings, settings);
   }
+
   getLocalData(STORAGE_KEYS.services, defaultServices);
   getLocalData(STORAGE_KEYS.timings, defaultTimings);
   
@@ -91,21 +107,86 @@
   getLocalData(STORAGE_KEYS.bookings, []);
 
   // Global namespace definitions
+  // Sync wrappers
+  function syncFromServer(key, callback) {
+    if (window.location.protocol.startsWith("http")) {
+      fetch(`/api/data?key=${key}`)
+        .then(res => {
+          if (!res.ok) throw new Error("Key not found");
+          return res.json();
+        })
+        .then(serverData => {
+          if (serverData) {
+            saveLocalData(key, serverData);
+            if (callback) callback(serverData);
+          }
+        })
+        .catch(err => {
+          // Fail silently to local storage
+        });
+    }
+  }
+
+  function syncToServer(key, data) {
+    if (window.location.protocol.startsWith("http")) {
+      fetch(`/api/data?key=${key}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      }).catch(err => console.warn(`Failed to sync key ${key} to server:`, err));
+    }
+  }
+
+  // Load sync from server
+  syncFromServer(STORAGE_KEYS.settings, () => {
+    if (window.UHC && typeof window.UHC.renderDynamicContent === "function") {
+      window.UHC.renderDynamicContent();
+    }
+  });
+  syncFromServer(STORAGE_KEYS.services, () => {
+    if (window.UHC && typeof window.UHC.renderDynamicContent === "function") {
+      window.UHC.renderDynamicContent();
+    }
+  });
+  syncFromServer(STORAGE_KEYS.timings, () => {
+    if (window.UHC && typeof window.UHC.renderDynamicContent === "function") {
+      window.UHC.renderDynamicContent();
+    }
+  });
+  syncFromServer(STORAGE_KEYS.chatbot);
+  syncFromServer(STORAGE_KEYS.bookings);
+
+  // Global namespace definitions
   window.UHC = {
     getSettings: () => getLocalData(STORAGE_KEYS.settings, defaultSettings),
-    saveSettings: (settings) => saveLocalData(STORAGE_KEYS.settings, settings),
+    saveSettings: (settings) => {
+      saveLocalData(STORAGE_KEYS.settings, settings);
+      syncToServer(STORAGE_KEYS.settings, settings);
+    },
 
     getServices: () => getLocalData(STORAGE_KEYS.services, defaultServices),
-    saveServices: (services) => saveLocalData(STORAGE_KEYS.services, services),
+    saveServices: (services) => {
+      saveLocalData(STORAGE_KEYS.services, services);
+      syncToServer(STORAGE_KEYS.services, services);
+    },
 
     getTimings: () => getLocalData(STORAGE_KEYS.timings, defaultTimings),
-    saveTimings: (timings) => saveLocalData(STORAGE_KEYS.timings, timings),
+    saveTimings: (timings) => {
+      saveLocalData(STORAGE_KEYS.timings, timings);
+      syncToServer(STORAGE_KEYS.timings, timings);
+    },
 
     getChatbotSettings: () => getLocalData(STORAGE_KEYS.chatbot, defaultChatbotSettings),
-    saveChatbotSettings: (settings) => saveLocalData(STORAGE_KEYS.chatbot, settings),
+    saveChatbotSettings: (settings) => {
+      saveLocalData(STORAGE_KEYS.chatbot, settings);
+      syncToServer(STORAGE_KEYS.chatbot, settings);
+    },
 
     getBookings: () => getLocalData(STORAGE_KEYS.bookings, []),
-    saveBookings: (bookings) => saveLocalData(STORAGE_KEYS.bookings, bookings),
+    saveBookings: (bookings) => {
+      saveLocalData(STORAGE_KEYS.bookings, bookings);
+      syncToServer(STORAGE_KEYS.bookings, bookings);
+    },
 
     // Common Day of Week helper
     dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -117,6 +198,22 @@
       const ap = h >= 12 ? "PM" : "AM";
       h = h % 12 || 12;
       return `${h}:${String(m).padStart(2, "0")} ${ap}`;
+    },
+
+    // Theme Switcher helper methods
+    getTheme: function () {
+      return localStorage.getItem("uhcTheme") || "light";
+    },
+    setTheme: function (theme) {
+      localStorage.setItem("uhcTheme", theme);
+      if (theme === "dark") {
+        document.body.classList.add("dark-theme");
+      } else {
+        document.body.classList.remove("dark-theme");
+      }
+    },
+    initTheme: function () {
+      this.setTheme(this.getTheme());
     }
   };
 })();

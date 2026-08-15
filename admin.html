@@ -13,13 +13,17 @@
   <div class="login-card">
     <div class="brand"><span class="brand-icon">❤</span><span>Usman Heart care clinic<small>Admin Area</small></span></div>
     <h2>Admin Login</h2>
-    <p class="muted">Please enter the administrator password to proceed.</p>
+    <p class="muted">Please enter your administrator credentials to proceed.</p>
     <form id="admin-login-form">
+      <div class="form-group">
+        <label for="admin-email">Email Address</label>
+        <input type="email" id="admin-email" placeholder="Enter email" required>
+      </div>
       <div class="form-group">
         <label for="admin-password">Password</label>
         <input type="password" id="admin-password" placeholder="Enter password" required>
       </div>
-      <div id="login-error" class="login-error-msg" style="display:none;">Incorrect password. Please try again.</div>
+      <div id="login-error" class="login-error-msg" style="display:none;">Incorrect email or password. Please try again.</div>
       <button type="submit" class="btn btn-primary full-btn">Access Dashboard</button>
     </form>
   </div>
@@ -34,6 +38,7 @@
     </a>
     <div class="admin-nav-actions">
       <span class="admin-user-status">Logged in as Admin</span>
+      <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
       <button id="admin-logout-btn" class="btn btn-light btn-sm">Logout</button>
     </div>
   </nav>

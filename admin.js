@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // 1. Session Authentication
   const loginOverlay = document.getElementById("admin-login-overlay");
   const loginForm = document.getElementById("admin-login-form");
+  const loginEmailInput = document.getElementById("admin-email");
   const loginPassInput = document.getElementById("admin-password");
   const loginError = document.getElementById("login-error");
   const logoutBtn = document.getElementById("admin-logout-btn");
@@ -20,11 +21,18 @@ document.addEventListener("DOMContentLoaded", () => {
   loginForm.addEventListener("submit", (e) => {
     e.preventDefault();
     const settings = window.UHC.getSettings();
-    if (loginPassInput.value === settings.adminPassword) {
+    const enteredEmail = loginEmailInput ? loginEmailInput.value.trim().toLowerCase() : "";
+    const enteredPass = loginPassInput ? loginPassInput.value : "";
+    
+    const validEmail = settings.adminEmail || "faizan@gmail.com";
+    const validPass = settings.adminPassword || "Faizan@786";
+
+    if (enteredEmail === validEmail.trim().toLowerCase() && enteredPass === validPass) {
       sessionStorage.setItem("uhcAdminAuthenticated", "true");
       loginOverlay.style.display = "none";
       loginError.style.display = "none";
-      loginPassInput.value = "";
+      if (loginEmailInput) loginEmailInput.value = "";
+      if (loginPassInput) loginPassInput.value = "";
       loadDashboard();
     } else {
       loginError.style.display = "block";
